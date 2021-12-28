@@ -73,12 +73,18 @@ void writeProfileFromExternApi(std::string token, std::string accountId, std::st
 		}
 		curl_easy_cleanup(curl);
 		nlohmann::json leaks = nlohmann::json::parse(readBuffer);
-		
+		/*if (leaks["items"] && leaks["items"].is_array()) {
+			leaks = leaks["items"];
+		}*/
+
+		if (Util::exists(leaks, "items")) {
+			leaks = leaks["items"];
+		}
 
 		profile["profileId"] = "athena";
 		nlohmann::json basicitems = nlohmann::json::parse("{\"sandbox_loadout\":{\"templateId\":\"CosmeticLocker:cosmeticlocker_athena\",\"attributes\":{\"locker_slots_data\":{\"slots\":{\"Pickaxe\":{\"items\":[null],\"activeVariants\":[]},\"Dance\":{\"items\":[null,null,null,null,null,null]},\"Glider\":{\"items\":[null]},\"Character\":{\"items\":[\"AthenaCharacter:cid_028_athena_commando_f\"],\"activeVariants\":[]},\"Backpack\":{\"items\":[null],\"activeVariants\":[]},\"ItemWrap\":{\"items\":[null,null,null,null,null,null,null],\"activeVariants\":[null,null,null,null,null,null,null]},\"LoadingScreen\":{\"items\":[null],\"activeVariants\":[null]},\"MusicPack\":{\"items\":[null],\"activeVariants\":[null]},\"SkyDiveContrail\":{\"items\":[null],\"activeVariants\":[null]}}},\"use_count\":0,\"banner_icon_template\":\"\",\"locker_name\":\"\",\"banner_color_template\":\"\",\"item_seen\":false,\"favorite\":false},\"quantity\":1},\"loadout_1\":{\"templateId\":\"CosmeticLocker:cosmeticlocker_athena\",\"attributes\":{\"locker_slots_data\":{\"slots\":{\"Pickaxe\":{\"items\":[null],\"activeVariants\":[]},\"Dance\":{\"items\":[null,null,null,null,null,null]},\"Glider\":{\"items\":[null]},\"Character\":{\"items\":[\"AthenaCharacter:cid_028_athena_commando_f\"],\"activeVariants\":[]},\"Backpack\":{\"items\":[null],\"activeVariants\":[]},\"ItemWrap\":{\"items\":[null,null,null,null,null,null,null],\"activeVariants\":[null,null,null,null,null,null,null]},\"LoadingScreen\":{\"items\":[null],\"activeVariants\":[null]},\"MusicPack\":{\"items\":[null],\"activeVariants\":[null]},\"SkyDiveContrail\":{\"items\":[null],\"activeVariants\":[null]}}},\"use_count\":0,\"banner_icon_template\":\"\",\"locker_name\":\"\",\"banner_color_template\":\"\",\"item_seen\":false,\"favorite\":false},\"quantity\":1}}");
 		profile["items"] = basicitems;
-		for (auto item : leaks["items"]) {
+		for (auto item : leaks) {
 			auto backendType = std::string(item["backendType"]);
 			auto id = std::string(item["id"]);
 			printf("%s\n", id.c_str());
