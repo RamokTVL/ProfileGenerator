@@ -27,6 +27,10 @@ public :
 
 	static std::string getProfileAthena(std::string accountId) {
 		return BASE_FORTNITE_PROD + "/fortnite/api/game/v2/profile/" + accountId + "/client/QueryProfile?profileId=athena&rvn=-1";
+	}	
+	
+	static std::string setAffliateName(std::string accountId) {
+		return BASE_FORTNITE_PROD + "/fortnite/api/game/v2/profile/" + accountId + "/client/SetAffiliateName?profileId=common_core&rvn=-1";
 	}
 
 	static std::string getCatalog() {

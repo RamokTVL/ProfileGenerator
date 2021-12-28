@@ -11,6 +11,33 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* use
 
 class Fortnite {
 
+public: static nlohmann::json setAffiliateName(std::string token, std::string accountId, std::string code) {
+	CURL* curl;
+	CURLcode res;
+	std::string readBuffer;
+	struct curl_slist* headers = NULL;
+	curl = curl_easy_init();
+
+	if (curl) {
+		headers = curl_slist_append(headers, std::string("Authorization: bearer " + token).c_str());
+		headers = curl_slist_append(headers, std::string("Content-Type: application/json").c_str());
+
+		auto url = RequestHelper::setAffliateName(accountId);
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+		curl_easy_setopt(curl, CURLOPT_POST, 1);
+		nlohmann::json j = nlohmann::json::object();
+		j["affiliateName"] = code;
+		auto jsonned = j.dump();
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonned.c_str());
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+		res = curl_easy_perform(curl);
+		return nlohmann::json::parse(readBuffer);
+		curl_easy_cleanup(curl);
+	}
+}
+
 public: static nlohmann::json GetProfileAthena(std::string token, std::string accountId) {
 	CURL* curl;
 	CURLcode res;
@@ -21,7 +48,6 @@ public: static nlohmann::json GetProfileAthena(std::string token, std::string ac
 	if (curl) {
 		headers = curl_slist_append(headers, std::string("Authorization: bearer " + token).c_str());
 		headers = curl_slist_append(headers, std::string("Content-Type: application/json").c_str());
-	//	auto url = endpoints.anyMCP(std::string(info["account_id"]), "ClaimLoginReward", "campaign");
 		auto url = RequestHelper::getProfileAthena(accountId);
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_POST, 1);
